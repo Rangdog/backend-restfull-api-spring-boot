@@ -1,5 +1,6 @@
 package com.fingerprint.demo.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fingerprint.demo.dto.MemberDTO;
 import com.fingerprint.demo.model.Member;
 import com.fingerprint.demo.service.MemberMapper;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -29,9 +31,17 @@ public class MemberController {
     }
 
     @PostMapping
-    public ResponseEntity<MemberDTO> createMember(@RequestBody MemberDTO memberDTO){
-        Member createMember = memberService.saveFromDTO(memberDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(MemberMapper.INSTANCE.memberToMemberDTO(createMember));
+    public ResponseEntity<MemberDTO> createMember(@RequestParam("file") MultipartFile file, @RequestParam("member") String memberJson){
+        try{
+            ObjectMapper objectMapper = new ObjectMapper();
+            MemberDTO memberDTO = objectMapper.readValue(memberJson, MemberDTO.class);
+            Member createdMember = memberService.saveFromDTO(memberDTO, file);
+            return ResponseEntity.status(HttpStatus.CREATED).body(MemberMapper.INSTANCE.memberToMemberDTO(createdMember));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PutMapping("/{id}")

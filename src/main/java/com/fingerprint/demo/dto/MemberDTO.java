@@ -11,4 +11,5 @@ public class MemberDTO {
     private Long id;
     private Long fingerprint;
     private String name;
+    private String imagePath;
 }

@@ -17,11 +17,13 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "fingerprint", unique = true, nullable = true)
+    @Column(name = "fingerprint", nullable = true)
     private Long fingerprint;
 
     private String name;
 
+    @Column(name = "image_path")
+    private String imagePath;
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DetailVerify> detailVerifies;
 }
