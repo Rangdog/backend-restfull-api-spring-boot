@@ -31,10 +31,10 @@ public class MemberController {
     }
 
     @PostMapping
-    public ResponseEntity<MemberDTO> createMember(@RequestParam("file") MultipartFile file, @RequestParam("member") String memberJson){
+    public ResponseEntity<MemberDTO> createMember(@RequestParam("file") MultipartFile file,@RequestParam("name") String name){
         try{
-            ObjectMapper objectMapper = new ObjectMapper();
-            MemberDTO memberDTO = objectMapper.readValue(memberJson, MemberDTO.class);
+            MemberDTO memberDTO = new MemberDTO();
+            memberDTO.setName(name);
             Member createdMember = memberService.saveFromDTO(memberDTO, file);
             return ResponseEntity.status(HttpStatus.CREATED).body(MemberMapper.INSTANCE.memberToMemberDTO(createdMember));
         }
