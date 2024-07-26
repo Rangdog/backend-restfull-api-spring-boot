@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DetailVerifyDTO {
     private Long id;
-    private Long doorId;
-    private Long memberId;
+    private DoorDTO door;
+    private MemberDTO  member;
 }

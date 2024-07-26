@@ -17,7 +17,7 @@ public class History {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "detail_verify_id", nullable = true)
+    @JoinColumn(name = "detail_verify_id")
     private DetailVerify detailVerify;
 
     private Date time;

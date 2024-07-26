@@ -41,20 +41,13 @@ public class HistorySevice {
         return history != null ? HistoryMapper.INSTANCE.historyToHistoryDTO(history) : null;
     }
 
-    public History updateHistory(Long id, HistoryDTO historyDTO){
-        History existingHistory = historyRepository.findById(id).orElse(null);
-        if(existingHistory != null){
-            existingHistory.setTime(historyDTO.getTime());
-            DetailVerify detailVerify = detailVerifyRepository.findById(historyDTO.getDetailVerifyId()).orElse(null);
-            existingHistory.setDetailVerify(detailVerify);
-
-            return historyRepository.save(existingHistory);
-        }
-        return null;
-    }
-
     public History saveFromDTO(HistoryDTO historyDTO){
         History history = HistoryMapper.INSTANCE.historyDTOToHistory(historyDTO);
         return historyRepository.save(history);
+    }
+
+    public List<HistoryDTO> findHistoryByDoorId(Long doorId){
+        List<History> histories = historyRepository.findByDetailVerifyDoorId(doorId);
+        return HistoryMapper.INSTANCE.historyToHistoryDTOs(histories);
     }
 }

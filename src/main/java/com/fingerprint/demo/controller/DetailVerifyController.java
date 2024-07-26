@@ -1,6 +1,7 @@
 package com.fingerprint.demo.controller;
 
 import com.fingerprint.demo.dto.DetailVerifyDTO;
+import com.fingerprint.demo.dto.MemberDTO;
 import com.fingerprint.demo.model.DetailVerify;
 import com.fingerprint.demo.service.DetailVerifyMapper;
 import com.fingerprint.demo.service.DetailVerifyService;
@@ -26,6 +27,12 @@ public class DetailVerifyController {
     public ResponseEntity<DetailVerifyDTO> getDetailVerifyById(@PathVariable Long id){
         DetailVerifyDTO detailVerifyDTO = detailVerifyService.findDTOById(id);
         return detailVerifyDTO!=null ? ResponseEntity.ok(detailVerifyDTO) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/door/{doorId}/members")
+    public ResponseEntity<List<MemberDTO>> getMembersByDoorId(@PathVariable Long doorId){
+        List<MemberDTO> members = detailVerifyService.findMembersByDoorId(doorId);
+        return ResponseEntity.ok(members);
     }
 
     @PostMapping

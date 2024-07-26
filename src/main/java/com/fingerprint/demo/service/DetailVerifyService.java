@@ -1,6 +1,7 @@
 package com.fingerprint.demo.service;
 
 import com.fingerprint.demo.dto.DetailVerifyDTO;
+import com.fingerprint.demo.dto.MemberDTO;
 import com.fingerprint.demo.model.DetailVerify;
 import com.fingerprint.demo.repository.DetailVerifyRepository;
 import com.fingerprint.demo.repository.DoorRepository;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DetailVerifyService {
@@ -62,5 +64,10 @@ public class DetailVerifyService {
         detailVerify.setDoor(doorRepository.findById(detailVerifyDTO.getDoorId()).orElse(null));
         detailVerify.setMember(memberRepository.findById(detailVerifyDTO.getMemberId()).orElse(null));
         return detailVerifyRepository.save(detailVerify);
+    }
+
+    public List<MemberDTO> findMembersByDoorId(Long doorId){
+        List<DetailVerify> detailVerifies = detailVerifyRepository.findByDoorId(doorId);
+        return detailVerifies.stream().map(DetailVerify::getMember).distinct().map(MemberMapper.INSTANCE::memberToMemberDTO).collect(Collectors.toList());
     }
 }

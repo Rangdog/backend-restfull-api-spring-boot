@@ -1,5 +1,6 @@
 package com.fingerprint.demo.dto;
 
+import com.fingerprint.demo.model.DetailVerify;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,6 @@ import java.util.Date;
 @NoArgsConstructor
 public class HistoryDTO {
     private Long id;
-    private Long detailVerifyId;
+    private DetailVerifyDTO  detailVerify;
     private Date Time;
 }

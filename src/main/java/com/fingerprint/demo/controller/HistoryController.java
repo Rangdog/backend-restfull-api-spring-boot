@@ -28,6 +28,12 @@ public class HistoryController {
         return historyDTO != null ? ResponseEntity.ok(historyDTO) : ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/door/{doorId}")
+    public ResponseEntity<List<HistoryDTO>> getHistoryByDoorId(@PathVariable Long doorId){
+        List<HistoryDTO> historyDTOS = historySevice.findHistoryByDoorId(doorId);
+        return ResponseEntity.ok(historyDTOS);
+    }
+
     @PostMapping
     public ResponseEntity<HistoryDTO> createHistory(@RequestBody HistoryDTO historyDTO){
         History craetedHistory = historySevice.saveFromDTO(historyDTO);
