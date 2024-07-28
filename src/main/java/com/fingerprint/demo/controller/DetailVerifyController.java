@@ -37,6 +37,14 @@ public class DetailVerifyController {
 
     @PostMapping
     public  ResponseEntity<DetailVerifyDTO> createDetailVerify(@RequestBody DetailVerifyDTO detailVerifyDTO){
+        System.out.println(detailVerifyDTO);
+        DetailVerifyDTO checkExist = detailVerifyService.findByDoorAndMember(detailVerifyDTO.getDoor().getId(), detailVerifyDTO.getMember().getId());
+        if(checkExist != null){
+            DetailVerify updatedDetailVerify = detailVerifyService.deleteDetailVerify(detailVerifyDTO.getId(), detailVerifyDTO);
+            return updatedDetailVerify != null
+                    ? ResponseEntity.ok(DetailVerifyMapper.INSTANCE.detailVerifyToDetailVerifyDTO(updatedDetailVerify))
+                    : ResponseEntity.notFound().build(); // Trả về DetailVerifyDTO hoặc 404
+        }
         DetailVerify createdDetailVerify = detailVerifyService.saveFromDTO(detailVerifyDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(DetailVerifyMapper.INSTANCE.detailVerifyToDetailVerifyDTO(createdDetailVerify));
     }
@@ -49,10 +57,12 @@ public class DetailVerifyController {
                 : ResponseEntity.notFound().build(); // Trả về DetailVerifyDTO hoặc 404
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDetailVerify(@PathVariable Long id){
-        detailVerifyService.delete(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/delete")
+    public ResponseEntity<DetailVerifyDTO> deleteDetailVerify(@RequestParam("doorId") Long doorId, @RequestParam("memberId") Long memberId){
+        DetailVerifyDTO detailVerifyDTO = detailVerifyService.findByDoorAndMember(doorId, memberId);
+        DetailVerify updatedDetailVerify = detailVerifyService.deleteDetailVerify(detailVerifyDTO.getId(), detailVerifyDTO);
+        return updatedDetailVerify != null
+                ? ResponseEntity.ok(DetailVerifyMapper.INSTANCE.detailVerifyToDetailVerifyDTO(updatedDetailVerify))
+                : ResponseEntity.notFound().build(); // Trả về DetailVerifyDTO hoặc 404
     }
-
 }

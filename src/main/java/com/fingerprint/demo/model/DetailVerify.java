@@ -27,4 +27,7 @@ public class DetailVerify {
 
     @OneToMany(mappedBy = "detailVerify", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<History> histories;
+
+    @Column(name = "enable")
+    private Boolean isEnable;
 }

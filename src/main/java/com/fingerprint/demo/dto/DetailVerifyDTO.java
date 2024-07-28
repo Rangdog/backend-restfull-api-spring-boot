@@ -11,4 +11,5 @@ public class DetailVerifyDTO {
     private Long id;
     private DoorDTO door;
     private MemberDTO  member;
+    private Boolean isEnable;
 }

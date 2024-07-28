@@ -24,6 +24,12 @@ public class MemberController {
         return memberService.findAllDTO();
     }
 
+
+    @GetMapping("/getmemberfordoor")
+    public List<MemberDTO> getAllMemberCanRegisterDoor(@RequestParam("doorId") Long id){
+        return memberService.findByNotInDetailVerifiesOrDisabled(id);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<MemberDTO> getMemberById(@PathVariable Long id){
         MemberDTO memberDTO = memberService.findDTOById(id);

@@ -54,6 +54,19 @@ public class DetailVerifyService {
             // Cập nhật các thuộc tính từ DetailVerifyDTO
             existingDetailVerify.setDoor(DoorMapper.INSTANCE.doorDTOToDoor(detailVerifyDTO.getDoor())); // Cập nhật Door
             existingDetailVerify.setMember(MemberMapper.INSTANCE.memberDTOToMember(detailVerifyDTO.getMember())); // Cập nhật Member
+            existingDetailVerify.setIsEnable(detailVerifyDTO.getIsEnable());
+            return detailVerifyRepository.save(existingDetailVerify); // Lưu lại vào cơ sở dữ liệu
+        }
+        return null; // Trả về null nếu không tìm thấy DetailVerify
+    }
+
+    public DetailVerify deleteDetailVerify(Long id, DetailVerifyDTO detailVerifyDTO) {
+        DetailVerify existingDetailVerify = detailVerifyRepository.findById(id).orElse(null); // Tìm kiếm DetailVerify theo ID
+        if (existingDetailVerify != null) {
+            // Cập nhật các thuộc tính từ DetailVerifyDTO
+            existingDetailVerify.setDoor(DoorMapper.INSTANCE.doorDTOToDoor(detailVerifyDTO.getDoor())); // Cập nhật Door
+            existingDetailVerify.setMember(MemberMapper.INSTANCE.memberDTOToMember(detailVerifyDTO.getMember())); // Cập nhật Member
+            existingDetailVerify.setIsEnable(!detailVerifyDTO.getIsEnable());
             return detailVerifyRepository.save(existingDetailVerify); // Lưu lại vào cơ sở dữ liệu
         }
         return null; // Trả về null nếu không tìm thấy DetailVerify

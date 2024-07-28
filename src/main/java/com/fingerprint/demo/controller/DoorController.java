@@ -18,10 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/door")
@@ -47,7 +44,7 @@ public class DoorController {
     }
     @GetMapping("/{doorId}/members")
     public List<MemberDTO> getMembersByDoorId(@PathVariable Long doorId) {
-        return memberService.findMembersByDoorId(doorId);
+        return memberService.findMembersByDoorIdWithEnableTrue(doorId);
     }
     @GetMapping("/{doorId}/history")
     public List<HistoryDTO> getHistoryByDoorId(@PathVariable Long doorId) {
@@ -91,10 +88,12 @@ public class DoorController {
                     // Lấy tất cả các member của door
                     List<MemberDTO> doorMembers = memberService.findMembersByDoorId(doorId);
                     MemberDTO matchedMember = doorMembers.stream()
-                            .filter(member -> member.getFingerprint().equals(bestMatchLabel))
+                            .filter(member -> Optional.ofNullable(member.getFingerprint()).map(fingerprint -> fingerprint.equals(bestMatchLabel)).orElse(false))
                             .findFirst()
                             .orElse(null);
+                    System.out.println(bestMatchLabel);
                     if (matchedMember != null) {
+                        System.out.println("ádasdsadasd");
                         // Tạo history
                         DetailVerifyDTO detailVerifyDTO = detailVerifyService.findByDoorAndMember(door.getId(), matchedMember.getId());
                         History history = new History();

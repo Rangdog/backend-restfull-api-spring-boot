@@ -129,4 +129,14 @@ public class MemberService {
         List<Member> members = memberRepository.findByDetailVerifiesDoorId(doorId);
         return MemberMapper.INSTANCE.memberToMemberDTOs(members);
     }
+
+    public List<MemberDTO> findMembersByDoorIdWithEnableTrue(Long doorId) {
+        List<Member> members = memberRepository.findByDetailVerifiesDoorIdWithEnableTrue(doorId);
+        return MemberMapper.INSTANCE.memberToMemberDTOs(members);
+    }
+
+    public List<MemberDTO> findByNotInDetailVerifiesOrDisabled(Long doorId) {
+        List<Member> members = memberRepository.findByNotInDetailVerifiesOrDisabled(doorId);
+        return MemberMapper.INSTANCE.memberToMemberDTOs(members);
+    }
 }
