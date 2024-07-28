@@ -52,8 +52,8 @@ public class DetailVerifyService {
         DetailVerify existingDetailVerify = detailVerifyRepository.findById(id).orElse(null); // Tìm kiếm DetailVerify theo ID
         if (existingDetailVerify != null) {
             // Cập nhật các thuộc tính từ DetailVerifyDTO
-            existingDetailVerify.setDoor(doorRepository.findById(detailVerifyDTO.getDoorId()).orElse(null)); // Cập nhật Door
-            existingDetailVerify.setMember(memberRepository.findById(detailVerifyDTO.getMemberId()).orElse(null)); // Cập nhật Member
+            existingDetailVerify.setDoor(DoorMapper.INSTANCE.doorDTOToDoor(detailVerifyDTO.getDoor())); // Cập nhật Door
+            existingDetailVerify.setMember(MemberMapper.INSTANCE.memberDTOToMember(detailVerifyDTO.getMember())); // Cập nhật Member
             return detailVerifyRepository.save(existingDetailVerify); // Lưu lại vào cơ sở dữ liệu
         }
         return null; // Trả về null nếu không tìm thấy DetailVerify
@@ -61,8 +61,8 @@ public class DetailVerifyService {
 
     public DetailVerify saveFromDTO(DetailVerifyDTO detailVerifyDTO) {
         DetailVerify detailVerify = DetailVerifyMapper.INSTANCE.detailVerifyDTOToDetailVerify(detailVerifyDTO); // Chuyển đổi từ DTO sang DetailVerify
-        detailVerify.setDoor(doorRepository.findById(detailVerifyDTO.getDoorId()).orElse(null));
-        detailVerify.setMember(memberRepository.findById(detailVerifyDTO.getMemberId()).orElse(null));
+        detailVerify.setDoor(DoorMapper.INSTANCE.doorDTOToDoor(detailVerifyDTO.getDoor()));
+        detailVerify.setMember(MemberMapper.INSTANCE.memberDTOToMember(detailVerifyDTO.getMember()));
         return detailVerifyRepository.save(detailVerify);
     }
 
@@ -70,4 +70,10 @@ public class DetailVerifyService {
         List<DetailVerify> detailVerifies = detailVerifyRepository.findByDoorId(doorId);
         return detailVerifies.stream().map(DetailVerify::getMember).distinct().map(MemberMapper.INSTANCE::memberToMemberDTO).collect(Collectors.toList());
     }
+
+    public DetailVerifyDTO findByDoorAndMember(Long doorId, Long memberId) {
+        DetailVerify detailVerifies = detailVerifyRepository.findByDoorIdAndMemberId(doorId, memberId);
+        return DetailVerifyMapper.INSTANCE.detailVerifyToDetailVerifyDTO(detailVerifies);
+    }
+
 }

@@ -125,5 +125,8 @@ public class MemberService {
         System.out.println("Image saved at: " + imagePath);
         return imagePath; // Trả về đường dẫn tệp đã lưu
     }
-
+    public List<MemberDTO> findMembersByDoorId(Long doorId) {
+        List<Member> members = memberRepository.findByDetailVerifiesDoorId(doorId);
+        return MemberMapper.INSTANCE.memberToMemberDTOs(members);
+    }
 }

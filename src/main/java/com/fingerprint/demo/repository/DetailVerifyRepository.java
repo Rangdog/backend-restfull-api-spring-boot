@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface DetailVerifyRepository extends JpaRepository<DetailVerify, Long> {
     List<DetailVerify>  findByDoorId(Long doorID);
+    DetailVerify findByDoorIdAndMemberId(Long doorId, Long memberId);
 }

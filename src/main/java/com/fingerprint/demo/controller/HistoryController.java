@@ -40,11 +40,6 @@ public class HistoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(HistoryMapper.INSTANCE.historyToHistoryDTO(craetedHistory));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<HistoryDTO> updateHistory(@PathVariable Long id, @RequestBody HistoryDTO historyDTO){
-        History updatedHistory = historySevice.updateHistory(id,historyDTO);
-        return updatedHistory != null ? ResponseEntity.ok(HistoryMapper.INSTANCE.historyToHistoryDTO(updatedHistory)) : ResponseEntity.notFound().build();
-    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deteteHistory(@PathVariable Long id){
