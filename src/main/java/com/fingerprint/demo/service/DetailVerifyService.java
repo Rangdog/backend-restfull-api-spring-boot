@@ -76,6 +76,7 @@ public class DetailVerifyService {
         DetailVerify detailVerify = DetailVerifyMapper.INSTANCE.detailVerifyDTOToDetailVerify(detailVerifyDTO); // Chuyển đổi từ DTO sang DetailVerify
         detailVerify.setDoor(DoorMapper.INSTANCE.doorDTOToDoor(detailVerifyDTO.getDoor()));
         detailVerify.setMember(MemberMapper.INSTANCE.memberDTOToMember(detailVerifyDTO.getMember()));
+        detailVerify.setIsEnable(true);
         return detailVerifyRepository.save(detailVerify);
     }
 
