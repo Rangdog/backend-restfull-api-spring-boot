@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -93,12 +95,13 @@ public class DoorController {
                             .orElse(null);
                     System.out.println(bestMatchLabel);
                     if (matchedMember != null) {
-                        System.out.println("ádasdsadasd");
                         // Tạo history
                         DetailVerifyDTO detailVerifyDTO = detailVerifyService.findByDoorAndMember(door.getId(), matchedMember.getId());
                         History history = new History();
                         history.setDetailVerify(DetailVerifyMapper.INSTANCE.detailVerifyDTOToDetailVerify(detailVerifyDTO));
-                        history.setTime(new Date());
+                        LocalDateTime now = LocalDateTime.now();
+                        Timestamp timestamp = Timestamp.valueOf(now);
+                        history.setTime(timestamp);
                         historySevice.save(history);
                         // Cập nhật thời gian mở cửa gần nhất
                         return ResponseEntity.ok(Collections.singletonMap("message", "Mở cửa thành công! Xin chào " + matchedMember.getName()));
