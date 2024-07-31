@@ -124,6 +124,71 @@ public class DoorController {
         }
     }
 
+    @PostMapping("/{doorId}/verify2")
+    public ResponseEntity<?> verifyFingerprintByModel2(@PathVariable Long doorId, @RequestParam("file")MultipartFile file){
+        if(file.isEmpty()){
+            return ResponseEntity.badRequest().body("Vui lòng chọn file để upload");
+        }
+        try{
+            Door door = doorService.findById(doorId);
+            if (door == null) {
+                return ResponseEntity.notFound().build();
+            }
+            RestTemplate restTemplate = new RestTemplate();
+            String verifyUrl = "http://localhost:5000/api/verify_model_2";
+            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+            body.add("file", new ByteArrayResource(file.getBytes()) {
+                @Override
+                public String getFilename() {
+                    return file.getOriginalFilename();
+                }
+            });
+            body.add("doorId", doorId);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+            ResponseEntity<Map> responseEntity = restTemplate.postForEntity(verifyUrl, requestEntity, Map.class);
+            if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
+                Map<String, Object> flaskResponse = responseEntity.getBody();
+                if (flaskResponse.containsKey("message") && flaskResponse.get("message").equals("Unlock successful!")) {
+                    Long bestMatchLabel = ((Number) flaskResponse.get("label")).longValue();
+                    // Lấy tất cả các member của door
+                    List<MemberDTO> doorMembers = memberService.findMembersByDoorId(doorId);
+                    MemberDTO matchedMember = doorMembers.stream()
+                            .filter(member -> Optional.ofNullable(member.getFingerprint()).map(fingerprint -> fingerprint.equals(bestMatchLabel)).orElse(false))
+                            .findFirst()
+                            .orElse(null);
+                    System.out.println(bestMatchLabel);
+                    if (matchedMember != null) {
+                        // Tạo history
+                        DetailVerifyDTO detailVerifyDTO = detailVerifyService.findByDoorAndMember(door.getId(), matchedMember.getId());
+                        History history = new History();
+                        history.setDetailVerify(DetailVerifyMapper.INSTANCE.detailVerifyDTOToDetailVerify(detailVerifyDTO));
+                        LocalDateTime now = LocalDateTime.now();
+                        Timestamp timestamp = Timestamp.valueOf(now);
+                        history.setTime(timestamp);
+                        historySevice.save(history);
+                        // Cập nhật thời gian mở cửa gần nhất
+                        return ResponseEntity.ok(Collections.singletonMap("message", "Mở cửa thành công! Xin chào " + matchedMember.getName()));
+                    } else {
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                                .body(Collections.singletonMap("message", "Bạn không có quyền mở cửa này."));
+                    }
+                }
+                else{
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                            .body(Collections.singletonMap("message", "Dấu vân tay của bạn chưa có trong cơ sở dữ liệu."));
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(Collections.singletonMap("message", "Lỗi khi xác thực vân tay"));
+            }
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi không xác định: " + e.getMessage());
+        }
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<DoorDTO> updateDoor(@PathVariable Long id, @RequestBody DoorDTO doorDTO){
         Door updatedDoor = doorService.updateDoor(id,doorDTO);
