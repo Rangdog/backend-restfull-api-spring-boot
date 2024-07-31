@@ -33,6 +33,11 @@ public class HistoryController {
         List<HistoryDTO> historyDTOS = historySevice.findHistoryByDoorId(doorId);
         return ResponseEntity.ok(historyDTOS);
     }
+    @GetMapping("/member/{memberId}") // Endpoint mới để lấy lịch sử theo memberId
+    public ResponseEntity<List<HistoryDTO>> getHistoryByMemberId(@PathVariable Long memberId) {
+        List<HistoryDTO> historyDTOS = historySevice.findHistoryByMemberId(memberId);
+        return ResponseEntity.ok(historyDTOS);
+    }
 
     @PostMapping
     public ResponseEntity<HistoryDTO> createHistory(@RequestBody HistoryDTO historyDTO){

@@ -50,4 +50,8 @@ public class HistorySevice {
         List<History> histories = historyRepository.findByDetailVerifyDoorId(doorId);
         return HistoryMapper.INSTANCE.historyToHistoryDTOs(histories);
     }
+    public List<HistoryDTO> findHistoryByMemberId(Long memberId) {
+        List<History> histories = historyRepository.findByDetailVerifyMemberId(memberId);
+        return HistoryMapper.INSTANCE.historyToHistoryDTOs(histories);
+    }
 }
