@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Tắt CSRF cho đơn giản (nên bật trong môi trường sản xuất)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v2/api-docs", "/swagger-resources/**", "/swagger-ui/**", "/webjars/**").permitAll() // Cho phép truy cập Swagger UI
-                        .anyRequest().permitAll() // Tất cả các yêu cầu khác đều yêu cầu xác thực
+                        .anyRequest().authenticated() // Tất cả các yêu cầu khác đều yêu cầu xác thực
                 )
                 .httpBasic(Customizer.withDefaults());
 
