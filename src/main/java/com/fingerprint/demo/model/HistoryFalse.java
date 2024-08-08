@@ -6,20 +6,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+
+@Entity
+@Table(name = "history_false")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "history")
-public class History {
+public class HistoryFalse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "detail_verify_id")
-    private DetailVerify detailVerify;
-
+    private String label;
+    private Double similarity;
     private Date time;
-
+    @Column(name = "door_id")
+    private Long doorId;
+    private String reason;
 }

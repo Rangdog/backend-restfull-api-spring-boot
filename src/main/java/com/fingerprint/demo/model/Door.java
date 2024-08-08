@@ -24,6 +24,7 @@ public class Door {
 
     private String location;
 
+
     @OneToMany(mappedBy = "door", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DetailVerify> detailVerifies;
 }

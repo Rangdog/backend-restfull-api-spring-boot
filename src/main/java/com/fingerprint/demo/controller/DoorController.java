@@ -4,10 +4,7 @@ import com.fingerprint.demo.dto.DetailVerifyDTO;
 import com.fingerprint.demo.dto.DoorDTO;
 import com.fingerprint.demo.dto.HistoryDTO;
 import com.fingerprint.demo.dto.MemberDTO;
-import com.fingerprint.demo.model.DetailVerify;
-import com.fingerprint.demo.model.Door;
-import com.fingerprint.demo.model.History;
-import com.fingerprint.demo.model.Member;
+import com.fingerprint.demo.model.*;
 import com.fingerprint.demo.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -34,6 +31,8 @@ public class DoorController {
     private DetailVerifyService detailVerifyService;
     @Autowired
     private HistorySevice historySevice;
+    @Autowired
+    private HistoryFalseService historyFalseService;
     @GetMapping
     public List<DoorDTO> getAllDoor(){
         return doorService.findAllDTO();
@@ -106,20 +105,50 @@ public class DoorController {
                         // Cập nhật thời gian mở cửa gần nhất
                         return ResponseEntity.ok(Collections.singletonMap("message", "Mở cửa thành công! Xin chào " + matchedMember.getName()));
                     } else {
+                        Double similarities = ((Number) flaskResponse.get("similarities")).doubleValue();
+                        Long label = ((Number) flaskResponse.get("label")).longValue();
+                        HistoryFalse historyFalse = new HistoryFalse();
+                        historyFalse.setDoorId(doorId);
+                        historyFalse.setLabel(String.valueOf(label));
+                        LocalDateTime now = LocalDateTime.now();
+                        Timestamp timestamp = Timestamp.valueOf(now);
+                        historyFalse.setTime(timestamp);
+                        historyFalse.setSimilarity(similarities);
+                        historyFalse.setReason("Bạn không có quyền mở cửa này.");
+                        historyFalseService.save(historyFalse);
                         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                                 .body(Collections.singletonMap("message", "Bạn không có quyền mở cửa này."));
                     }
                 }
                 else{
+                    Double similarities = ((Number) flaskResponse.get("similarities")).doubleValue();
+                    Long label = ((Number) flaskResponse.get("label")).longValue();
+                    HistoryFalse historyFalse = new HistoryFalse();
+                    historyFalse.setDoorId(doorId);
+                    historyFalse.setLabel(String.valueOf(label));
+                    LocalDateTime now = LocalDateTime.now();
+                    Timestamp timestamp = Timestamp.valueOf(now);
+                    historyFalse.setTime(timestamp);
+                    historyFalse.setSimilarity(similarities);
+                    historyFalse.setReason("Dấu vân tay chưa vượt qua ngưỡng");
+                    historyFalseService.save(historyFalse);
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                             .body(Collections.singletonMap("message", "Dấu vân tay của bạn chưa có trong cơ sở dữ liệu."));
                 }
             } else {
+                HistoryFalse historyFalse = new HistoryFalse();
+                historyFalse.setDoorId(doorId);
+                LocalDateTime now = LocalDateTime.now();
+                Timestamp timestamp = Timestamp.valueOf(now);
+                historyFalse.setTime(timestamp);
+                historyFalse.setReason("Có lỗi bên server xác thực được vân tay");
+                historyFalseService.save(historyFalse);
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body(Collections.singletonMap("message", "Lỗi khi xác thực vân tay"));
             }
         }
         catch (Exception e){
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi không xác định: " + e.getMessage());
         }
     }
@@ -171,15 +200,44 @@ public class DoorController {
                         // Cập nhật thời gian mở cửa gần nhất
                         return ResponseEntity.ok(Collections.singletonMap("message", "Mở cửa thành công! Xin chào " + matchedMember.getName()));
                     } else {
+                        Double similarities = ((Number) flaskResponse.get("similarities")).doubleValue();
+                        Long label = ((Number) flaskResponse.get("label")).longValue();
+                        HistoryFalse historyFalse = new HistoryFalse();
+                        historyFalse.setDoorId(doorId);
+                        historyFalse.setLabel(String.valueOf(label));
+                        LocalDateTime now = LocalDateTime.now();
+                        Timestamp timestamp = Timestamp.valueOf(now);
+                        historyFalse.setTime(timestamp);
+                        historyFalse.setSimilarity(similarities);
+                        historyFalse.setReason("Bạn không có quyền mở cửa này.");
+                        historyFalseService.save(historyFalse);
                         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                                 .body(Collections.singletonMap("message", "Bạn không có quyền mở cửa này."));
                     }
                 }
                 else{
+                    Double similarities = ((Number) flaskResponse.get("similarities")).doubleValue();
+                    Long label = ((Number) flaskResponse.get("label")).longValue();
+                    HistoryFalse historyFalse = new HistoryFalse();
+                    historyFalse.setDoorId(doorId);
+                    historyFalse.setLabel(String.valueOf(label));
+                    LocalDateTime now = LocalDateTime.now();
+                    Timestamp timestamp = Timestamp.valueOf(now);
+                    historyFalse.setTime(timestamp);
+                    historyFalse.setSimilarity(similarities);
+                    historyFalse.setReason("Dấu vân tay chưa vượt qua ngưỡng");
+                    historyFalseService.save(historyFalse);
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                             .body(Collections.singletonMap("message", "Dấu vân tay của bạn chưa có trong cơ sở dữ liệu."));
                 }
             } else {
+                HistoryFalse historyFalse = new HistoryFalse();
+                historyFalse.setDoorId(doorId);
+                LocalDateTime now = LocalDateTime.now();
+                Timestamp timestamp = Timestamp.valueOf(now);
+                historyFalse.setTime(timestamp);
+                historyFalse.setReason("Có lỗi bên server xác thực được vân tay");
+                historyFalseService.save(historyFalse);
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body(Collections.singletonMap("message", "Lỗi khi xác thực vân tay"));
             }
