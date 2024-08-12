@@ -1,9 +1,6 @@
 package com.fingerprint.demo.service;
 
-import com.fingerprint.demo.repository.DetailVerifyRepository;
-import com.fingerprint.demo.repository.DoorRepository;
-import com.fingerprint.demo.repository.HistoryRepository;
-import com.fingerprint.demo.repository.MemberRepository;
+import com.fingerprint.demo.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +15,8 @@ public class MyService {
     private HistoryRepository historyRepository;
     @Autowired
     private DetailVerifyRepository detailVerifyRepository;
+    @Autowired
+    private HistoryFalseRepository historyFalseRepository;
 
     @Transactional
     public void resetDatabase(){
@@ -25,5 +24,6 @@ public class MyService {
         detailVerifyRepository.deleteAll();
         doorRepository.deleteAll();
         memberRepository.deleteAll();
+        historyFalseRepository.deleteAll();
     }
 }

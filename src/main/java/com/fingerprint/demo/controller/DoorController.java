@@ -114,7 +114,7 @@ public class DoorController {
                         Timestamp timestamp = Timestamp.valueOf(now);
                         historyFalse.setTime(timestamp);
                         historyFalse.setSimilarity(similarities);
-                        historyFalse.setReason("Bạn không có quyền mở cửa này.");
+                        historyFalse.setReason("0");
                         historyFalseService.save(historyFalse);
                         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                                 .body(Collections.singletonMap("message", "Bạn không có quyền mở cửa này."));
@@ -130,7 +130,7 @@ public class DoorController {
                     Timestamp timestamp = Timestamp.valueOf(now);
                     historyFalse.setTime(timestamp);
                     historyFalse.setSimilarity(similarities);
-                    historyFalse.setReason("Dấu vân tay chưa vượt qua ngưỡng");
+                    historyFalse.setReason("1");
                     historyFalseService.save(historyFalse);
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                             .body(Collections.singletonMap("message", "Dấu vân tay của bạn chưa có trong cơ sở dữ liệu."));
@@ -209,7 +209,7 @@ public class DoorController {
                         Timestamp timestamp = Timestamp.valueOf(now);
                         historyFalse.setTime(timestamp);
                         historyFalse.setSimilarity(similarities);
-                        historyFalse.setReason("Bạn không có quyền mở cửa này.");
+                        historyFalse.setReason("0");
                         historyFalseService.save(historyFalse);
                         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                                 .body(Collections.singletonMap("message", "Bạn không có quyền mở cửa này."));
@@ -225,7 +225,7 @@ public class DoorController {
                     Timestamp timestamp = Timestamp.valueOf(now);
                     historyFalse.setTime(timestamp);
                     historyFalse.setSimilarity(similarities);
-                    historyFalse.setReason("Dấu vân tay chưa vượt qua ngưỡng");
+                    historyFalse.setReason("1");
                     historyFalseService.save(historyFalse);
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                             .body(Collections.singletonMap("message", "Dấu vân tay của bạn chưa có trong cơ sở dữ liệu."));
