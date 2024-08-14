@@ -19,7 +19,8 @@ public class HistoryFalse {
     private String label;
     private Double similarity;
     private Date time;
-    @Column(name = "door_id")
-    private Long doorId;
     private String reason;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "door_id")
+    private Door door;
 }

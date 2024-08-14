@@ -24,6 +24,9 @@ public class Member {
 
     @Column(name = "image_path")
     private String imagePath;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = true)
+    private User user;
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DetailVerify> detailVerifies;
 }

@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v2/api-docs", "/swagger-resources/**", "/swagger-ui/**", "/webjars/**", "/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/door/**", "/api/members/**", "/api/detail-verify/**", "/api/history/**", "/api/members/underperformed", "/api/historyfalse/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/door/*/verify", "/api/door/*/verify2").permitAll() // Cho phép truy cập Swagger UI
+                        .requestMatchers(HttpMethod.POST, "/api/door/*/verify", "/api/door/*/verify2", "api/door/*/opendoor/password").permitAll() // Cho phép truy cập Swagger UI
                         .anyRequest().authenticated() // Tất cả các yêu cầu khác đều yêu cầu xác thực
                 )
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter

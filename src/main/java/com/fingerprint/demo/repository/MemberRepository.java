@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface MemberRepository extends JpaRepository <Member,Long> {
     List<Member> findByDetailVerifiesDoorId(Long doorId);
-    @Query("SELECT d.member FROM DetailVerify d WHERE d.door.id = :doorId AND d.isEnable = true")
+    @Query("SELECT d.member FROM DetailVerify d WHERE d.door.id = :doorId AND d.isEnable = true AND d.member.id IS NOT NULL")
     List<Member> findByDetailVerifiesDoorIdWithEnableTrue(Long doorId);
 
     @Query("SELECT m FROM Member m WHERE m.id NOT IN (SELECT d.member.id FROM DetailVerify d WHERE d.door.id = :doorId) OR m.id IN (SELECT d.member.id FROM DetailVerify d WHERE d.door.id = :doorId AND d.isEnable = false)")

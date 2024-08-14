@@ -24,7 +24,6 @@ import java.util.*;
 public class DoorController {
     @Autowired
     private DoorService doorService;
-
     @Autowired
     private MemberService memberService;
     @Autowired
@@ -55,6 +54,10 @@ public class DoorController {
     public ResponseEntity<DoorDTO> createDoor(@RequestBody DoorDTO doorDTO){
         System.out.println(doorDTO);System.out.println("Received DoorDTO: " + doorDTO);
         Door createdDoor = doorService.saveFromDTO(doorDTO);
+        DetailVerify detailVerify = new DetailVerify();
+        detailVerify.setIsEnable(true);
+        detailVerify.setDoor(createdDoor);
+        detailVerifyService.save(detailVerify);
         return ResponseEntity.status(HttpStatus.CREATED).body(DoorMapper.INSTANCE.doorToDoorDTO(createdDoor));
     }
 
@@ -108,7 +111,8 @@ public class DoorController {
                         Double similarities = ((Number) flaskResponse.get("similarities")).doubleValue();
                         Long label = ((Number) flaskResponse.get("label")).longValue();
                         HistoryFalse historyFalse = new HistoryFalse();
-                        historyFalse.setDoorId(doorId);
+
+                        historyFalse.setDoor(door);
                         historyFalse.setLabel(String.valueOf(label));
                         LocalDateTime now = LocalDateTime.now();
                         Timestamp timestamp = Timestamp.valueOf(now);
@@ -124,7 +128,7 @@ public class DoorController {
                     Double similarities = ((Number) flaskResponse.get("similarities")).doubleValue();
                     Long label = ((Number) flaskResponse.get("label")).longValue();
                     HistoryFalse historyFalse = new HistoryFalse();
-                    historyFalse.setDoorId(doorId);
+                    historyFalse.setDoor(door);
                     historyFalse.setLabel(String.valueOf(label));
                     LocalDateTime now = LocalDateTime.now();
                     Timestamp timestamp = Timestamp.valueOf(now);
@@ -137,7 +141,7 @@ public class DoorController {
                 }
             } else {
                 HistoryFalse historyFalse = new HistoryFalse();
-                historyFalse.setDoorId(doorId);
+                historyFalse.setDoor(door);
                 LocalDateTime now = LocalDateTime.now();
                 Timestamp timestamp = Timestamp.valueOf(now);
                 historyFalse.setTime(timestamp);
@@ -203,7 +207,7 @@ public class DoorController {
                         Double similarities = ((Number) flaskResponse.get("similarities")).doubleValue();
                         Long label = ((Number) flaskResponse.get("label")).longValue();
                         HistoryFalse historyFalse = new HistoryFalse();
-                        historyFalse.setDoorId(doorId);
+                        historyFalse.setDoor(door);
                         historyFalse.setLabel(String.valueOf(label));
                         LocalDateTime now = LocalDateTime.now();
                         Timestamp timestamp = Timestamp.valueOf(now);
@@ -219,7 +223,7 @@ public class DoorController {
                     Double similarities = ((Number) flaskResponse.get("similarities")).doubleValue();
                     Long label = ((Number) flaskResponse.get("label")).longValue();
                     HistoryFalse historyFalse = new HistoryFalse();
-                    historyFalse.setDoorId(doorId);
+                    historyFalse.setDoor(door);
                     historyFalse.setLabel(String.valueOf(label));
                     LocalDateTime now = LocalDateTime.now();
                     Timestamp timestamp = Timestamp.valueOf(now);
@@ -232,7 +236,7 @@ public class DoorController {
                 }
             } else {
                 HistoryFalse historyFalse = new HistoryFalse();
-                historyFalse.setDoorId(doorId);
+                historyFalse.setDoor(door);
                 LocalDateTime now = LocalDateTime.now();
                 Timestamp timestamp = Timestamp.valueOf(now);
                 historyFalse.setTime(timestamp);
@@ -257,5 +261,73 @@ public class DoorController {
     public ResponseEntity<Void> deleteDoor(@PathVariable Long id){
         doorService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/password")
+    public ResponseEntity<String> updatePassword(@PathVariable Long id, @RequestBody DoorDTO doorDTO){
+        Door door = doorService.findById(id);
+        door.setPassword(doorDTO.getPassword());
+        doorService.save(door);
+        return ResponseEntity.ok("Password updated successfully");
+    }
+
+    @PostMapping("/{id}/opendoor/password")
+    public ResponseEntity<?> openDoorByPassword(@PathVariable Long id, @RequestBody DoorDTO doorDTO){
+        Door door = doorService.findById(id);
+        try{
+            String doorPassword = door.getPassword().trim();
+        }
+        catch (Exception e){
+            System.out.println(doorDTO.getPassword());
+            HistoryFalse historyFalse = new HistoryFalse();
+            historyFalse.setDoor(door);
+            LocalDateTime now = LocalDateTime.now();
+            Timestamp timestamp = Timestamp.valueOf(now);
+            historyFalse.setTime(timestamp);
+            historyFalse.setReason("3");
+            historyFalseService.save(historyFalse);
+            System.out.println(doorDTO.getPassword());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonMap("message", "not set up password"));
+        }
+        if(!door.getPassword().isEmpty() && !door.getPassword().isBlank()){
+            String doorPassword = door.getPassword().trim();
+            String doorDTOPassword = doorDTO.getPassword().trim();
+            System.out.println(doorPassword.equals(doorDTOPassword));
+            if(doorPassword.equals(doorDTOPassword)){
+                DetailVerifyDTO detailVerifyDTO = detailVerifyService.findByDoorAndMember(door.getId(), null);
+                History history = new History();
+                history.setDetailVerify(DetailVerifyMapper.INSTANCE.detailVerifyDTOToDetailVerify(detailVerifyDTO));
+                LocalDateTime now = LocalDateTime.now();
+                Timestamp timestamp = Timestamp.valueOf(now);
+                history.setTime(timestamp);
+                historySevice.save(history);
+                return ResponseEntity.ok(Collections.singletonMap("message", "Open door successfully"));
+            }
+            else{
+                HistoryFalse historyFalse = new HistoryFalse();
+                historyFalse.setDoor(door);
+                LocalDateTime now = LocalDateTime.now();
+                Timestamp timestamp = Timestamp.valueOf(now);
+                historyFalse.setTime(timestamp);
+                historyFalse.setReason("2");
+                historyFalseService.save(historyFalse);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Collections.singletonMap("message", "wrong password"));
+            }
+        }
+        else{
+            System.out.println(doorDTO.getPassword());
+            HistoryFalse historyFalse = new HistoryFalse();
+            historyFalse.setDoor(door);
+            LocalDateTime now = LocalDateTime.now();
+            Timestamp timestamp = Timestamp.valueOf(now);
+            historyFalse.setTime(timestamp);
+            historyFalse.setReason("3");
+            historyFalseService.save(historyFalse);
+            System.out.println(doorDTO.getPassword());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonMap("message", "not set up password"));
+        }
     }
 }
